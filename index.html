@@ -37,7 +37,7 @@
             background-color: black;
             overflow: hidden;
         }
-
+        
         .info-overlay {
             position: fixed;
             bottom: 1rem;
@@ -50,11 +50,11 @@
             transition: opacity 300ms;
             font-family: "Microsoft YaHei", "微软雅黑", "SimHei", sans-serif;
         }
-
-            .info-overlay:hover {
-                opacity: 1;
-            }
-
+        
+        .info-overlay:hover {
+            opacity: 1;
+        }
+        
         /* 全局字体设置，确保中文显示正常 */
         body {
             font-family: "Microsoft YaHei", "微软雅黑", "SimHei", sans-serif;
@@ -97,22 +97,22 @@
                 // 确保字符串本身没有编码问题
                 this.message = "曾晓林我爱你";
                 this.isMobile = window.innerWidth < 768;
-
+                
                 // 初始化
                 this.initCanvas();
                 this.initializeParticles(this.isMobile ? 800 : 1500);
                 this.addEventListeners();
-
+                
                 // 开始动画
                 requestAnimationFrame(this.animate.bind(this));
             }
-
+            
             // 初始化Canvas尺寸
             initCanvas() {
                 this.resizeCanvas();
                 window.addEventListener('resize', () => this.resizeCanvas());
             }
-
+            
             // 调整Canvas尺寸
             resizeCanvas() {
                 this.canvas.width = window.innerWidth;
@@ -120,31 +120,31 @@
                 this.centerX = this.canvas.width / 2;
                 this.centerY = this.canvas.height / 2;
             }
-
+            
             // 初始化粒子
             initializeParticles(count) {
                 this.particles = [];
                 const baseHue = 330; // 粉色色调
-
+                
                 for (let i = 0; i < count; i++) {
                     // 使用爱心曲线方程生成点
                     const t = (i / count) * Math.PI * 2;
                     let x = 16 * Math.pow(Math.sin(t), 3);
                     let y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-
+                    
                     // 缩放因子，手机上更大一些
                     const scale = this.isMobile ? 10 + this.random() * 2 : 8 + this.random() * 2;
                     x *= scale;
                     y *= scale;
-
+                    
                     // 添加随机偏移
                     x += (this.random() * 10 - 5);
                     y += (this.random() * 10 - 5);
-
+                    
                     // 随机透明度和亮度
                     const alpha = 0.8 + this.random() * 0.2;
                     const lightness = 60 + this.random() * 20;
-
+                    
                     // 创建粒子
                     const particle = new Particle(
                         x,
@@ -153,11 +153,11 @@
                         `hsla(${baseHue}, 100%, ${lightness}%, ${alpha})`,
                         0.9 + this.random() * 0.2
                     );
-
+                    
                     this.particles.push(particle);
                 }
             }
-
+            
             // 添加事件监听器
             addEventListeners() {
                 // 双击关闭页面
@@ -168,7 +168,7 @@
                         alert('可以通过关闭标签页退出');
                     }, 100);
                 });
-
+                
                 // ESC键关闭
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
@@ -176,69 +176,69 @@
                     }
                 });
             }
-
+            
             // 绘制文字 - 重点优化字体设置
             drawText() {
                 const textScale = 1.0 + 0.1 * Math.sin(this.animationPhase);
                 const fontSize = this.isMobile ? 16 * textScale : 20 * textScale;
-
+                
                 // 明确指定中文字体，确保兼容性
                 this.ctx.font = `bold ${fontSize}px "Microsoft YaHei", "微软雅黑", "SimHei", sans-serif`;
                 this.ctx.textAlign = 'center';
                 this.ctx.textBaseline = 'middle';
-
+                
                 // 绘制文字阴影
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
                 this.ctx.fillText(this.message, 1, 10 * textScale + 1);
-
+                
                 // 绘制文字
                 this.ctx.fillStyle = '#FF69B4';
                 this.ctx.fillText(this.message, 0, 10 * textScale);
             }
-
+            
             // 动画循环
             animate() {
                 // 清空画布
                 this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
+                
                 // 保存当前状态并移动原点到中心
                 this.ctx.save();
                 this.ctx.translate(this.centerX, this.centerY);
-
+                
                 // 更新动画相位
                 this.animationPhase += this.pulseSpeed;
-
+                
                 // 计算缩放因子
                 const scale = 1.0 + 0.1 * Math.sin(this.animationPhase);
-
+                
                 // 更新并绘制粒子
                 this.particles.forEach(particle => {
                     // 更新位置
                     particle.x = particle.baseX * scale * particle.pulseFactor;
                     particle.y = particle.baseY * scale * particle.pulseFactor;
-
+                    
                     // 添加微小随机运动
                     particle.x += (this.random() * 2 - 1);
                     particle.y += (this.random() * 2 - 1);
-
+                    
                     // 绘制粒子
                     this.ctx.fillStyle = particle.color;
                     this.ctx.beginPath();
                     this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
                     this.ctx.fill();
                 });
-
+                
                 // 绘制文字
                 this.drawText();
-
+                
                 // 恢复状态
                 this.ctx.restore();
-
+                
                 // 继续动画
                 requestAnimationFrame(this.animate.bind(this));
             }
         }
-
+        
         // 页面加载完成后初始化动画
         window.addEventListener('load', () => {
             new HeartAnimation();
